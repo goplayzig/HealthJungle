@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/static/output.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+
+    <style>  
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      /* 캘린더 컨테이너 */
+      #calendar-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+      }
+
+      /* 카드 스타일 */
+      .card {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 0.375rem;
+    overflow: hidden;
+    background-color: rgba(215, 215, 215, 0.886);
+    padding: 1rem;
+    width: 300px; /* 카드 너비 고정 */
+    height: 200px; /* 카드 높이 고정 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 내용이 카드 안에서 균등하게 분배되도록 */
+    box-sizing: border-box; /* 패딩과 테두리를 카드의 총 너비와 높이에 포함시킴 */
+}
+
+      .card-user {
+        font-weight: bold;
+        margin-bottom: 0.1rem;
+        overflow: hidden; /* 내용이 넘치지 않도록 */
+        text-overflow: ellipsis; /* 내용이 넘칠 경우 ...으로 표시 */
+        white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 */
+      }
+
+      .card-date {
+        overflow: hidden; /* 내용이 넘치지 않도록 */
+        text-overflow: ellipsis; /* 내용이 넘칠 경우 ...으로 표시 */
+        white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 */
+      }
+
+      .card-time {
+        margin-bottom: 1rem;
+        overflow: hidden; /* 내용이 넘치지 않도록 */
+        text-overflow: ellipsis; /* 내용이 넘칠 경우 ...으로 표시 */
+        white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 */
+      }
+
+      .card-text {
+        overflow: hidden; /* 내용이 넘치지 않도록 */
+        text-overflow: ellipsis; /* 내용이 넘칠 경우 ...으로 표시 */
+        white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 */
+        flex-grow: 1; /* 내용이 카드의 나머지 공간을 채우도록 */
+      }
+
+      /* 카드 레이아웃 스타일 */
+      .card-container {
+        display: flex;
+        justify-content: space-between; /* 카드 사이의 간격을 균등하게 분배 */
+        gap: 1rem; /* 카드 사이의 간격 */
+        flex-wrap: nowrap; /* 카드가 줄 바꿈되지 않도록 */
+        width: 100%;
+        max-width: 960px; /* 카드 컨테이너의 최대 너비 설정 */
+        margin: 0 auto; /* 중앙 정렬 */
+      }
+
+/* 카드 상단 스타일 */
+.card-header {
+    display: flex;
+    justify-content: space-between; /* 사용자 정보와 버튼을 양 끝으로 배치 */
+    align-items: center; /* 세로 중앙 정렬 */
+    margin-bottom: 1rem; /* 카드 상단과 내용 사이 간격 */
+}
+
+/* 버튼 스타일 */
+.card-buttons {
+    display: flex;
+    gap: 0.5rem; /* 버튼 사이 간격 */
+    align-items: center; /* 버튼 세로 중앙 정렬 */
+}
+
+.card-buttons button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0; /* 패딩 제거 */
+    margin: 0; /* 마진 제거 */
+}
+
+.card-buttons .btn-edit img {
+    width: 30px; /* 수정 버튼 이미지 너비 */
+    height: 30px; /* 수정 버튼 이미지 높이 */
+}
+
+.card-buttons .btn-delete img {
+    width: 24px; /* 삭제 버튼 이미지 너비 */
+    height: 24px; /* 삭제 버튼 이미지 높이 */
+}
+
+      /* 모달 스타일 */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 50;
+      }
+
+      .modal-window {
+        background: white;
+        padding: 1rem;
+        border-radius: 0.375rem;
+        max-width: 600px;
+        width: 100%;
+        position: relative;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        cursor: pointer;
+      }
+    </style>
+</head>
+<body>
+  
+    <div id="calendar-container" class="bg-gray-100 py-8 px-4 min-h-screen">
+        <!-- 캘린더 -->
+        <div class="w-full max-w-3xl p-4 bg-white shadow-lg rounded-lg mb-4">
+            <div id="calendar"></div>
+        </div>
+
+        <!-- 카드 박스 -->
+        <div class="w-full max-w-3xl p-4">
+                <div class="card-container">
+                    <div class="card">
+                      <div class="card-header">
+                        <p class="card-user">User1</p>
+                        <div class="card-buttons">
+                          <button type="button" id="edit-box" class="btn-edit" onclick="openEdit()">
+                            <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정">
+                          </button>
+                          <button type="button" id="delete-box" class="btn-delete" onclick="deleteCard()">
+                            <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제">
+                          </button>
+                        </div>
+                    </div>
+                        <p class="card-date">2024.09.03</p>
+                        <p class="card-time">실외 달리기 30분</p>
+                        <p class="card-text">5km 캠퍼스 런닝</p>
+                </div>
+
+                <div class="card">
+                  <div class="card-header">
+                    <p class="card-user">User2</p>
+                    <div class="card-buttons">
+                      <button type="button" id="edit-box" class="btn-edit" onclick="openEdit()">
+                        <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정">
+                      </button>
+                      <button type="button" id="delete-box" class="btn-delete" onclick="deleteCard()">
+                        <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제">
+                      </button>
+                    </div>
+                </div>
+                    <p class="card-date">2024.09.03</p>
+                    <p class="card-time">실내 달리기 30분</p>
+                    <p class="card-text">헬스장 런닝 머신 3km!</p>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <p class="card-user">User3</p>
+                <div class="card-buttons">
+                  <button type="button" id="edit-box" class="btn-edit" onclick="openEdit()">
+                    <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정">
+                  </button>
+                  <button type="button" id="delete-box" class="btn-delete" onclick="deleteCard()">
+                    <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제">
+                  </button>
+                </div>
+            </div>
+                <p class="card-date">2024.09.03</p>
+                <p class="card-time">근력 운동 10분</p>
+                <p class="card-text">힘들어요</p>
+        </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'customButton'
+                },
+                customButtons: {
+                    customButton: {
+                        text: '운동 기록하기',
+                        click: function() {
+                            modalOn();
+                        }
+                    }
+                },
+                buttonText: {
+                    customButton: '운동 기록하기'
+                },
+                themeSystem: 'standard'
+            });
+            
+            calendar.render();
+
+            var button = document.querySelector('.fc-customButton-button');
+            if (button) {
+                button.classList.add('bg-green-500', 'text-white', 'font-bold', 'py-2', 'px-4', 'rounded');
+            }
+        });
+
+        function modalOn() {
+            document.getElementById("calendar-container").style.opacity = "0.3";
+            document.getElementById("modal").style.display = "flex";
+        }
+
+        function modalOff() {
+            document.getElementById("calendar-container").style.opacity = "1";
+            document.getElementById("modal").style.display = "none";
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector(".modal-close").addEventListener("click", function() {
+                modalOff();
+            });
+        });
+    </script>
+
+    <!-- 오운완 자랑하기 Modal Section -->
+    <div id="modal" class="modal-overlay">
+        <div class="modal-window">
+            <span class="modal-close">✖</span>
+            <h2 class="text-2xl font-bold mb-6 text-center">오운완 자랑하기</h2>
+            
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-lg font-semibold mb-2" for="exercise">종목</label>
+                    <select id="exercise" class="w-full border border-gray-300 rounded px-4 py-2">
+                        <option>실내 런닝</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-lg font-semibold mb-2" for="duration">운동 시간 (분)</label>
+                    <select id="duration" class="w-full border border-gray-300 rounded px-4 py-2">
+                      <option>10분</option>
+                      <option>20분</option>
+                      <option>30분</option>
+                  </select>
+                </div>
+                
+                <div>
+                    <label class="block text-lg font-semibold mb-2" for="memo">메모</label>
+                    <textarea id="memo" class="w-full border border-gray-300 rounded px-4 py-2" rows="4"></textarea>
+                </div>
+                
+                <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded">운동 기록하기</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
