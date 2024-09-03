@@ -3,11 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
   <link href="/static/output.css" rel="stylesheet">
 </head>
-<body>
-  <h1 class="text-3xl font-bold underline">
-    Hello world!
-  </h1>
+<body class="bg-gray-50">
+  <div class="container mx-auto mt-14 flex h-max flex-col items-center">
+      <form hx-post="/login" hx-target="#error-message" class="flex flex-col items-center">
+          <a href="/#" class="mb-6 sm:mb-0">
+              <img src="https://cdn-icons-png.flaticon.com/512/11324/11324183.png" class="h-24" alt="Run Logo"/>
+          </a>
+          <h1 class="mt-4 pb-5 text-center text-2xl font-semibold">정글에서 함께 운동해요</h1>
+          <!-- Login box -->
+          <div class="flex flex-col gap-4 rounded-lg bg-white p-10 text-sm shadow-xl">
+              <div>
+                  <label for="ID" class="block pb-2 font-normal text-gray-700">
+                      ID
+                      <input class="w-full rounded-md border border-gray-200 px-5 py-2 shadow-sm focus:outline-slate-400"
+                             name="ID" placeholder="ID" required type="text">
+                  </label>
+              </div>
+              <div>
+                  <label class="block pb-2 font-normal text-gray-700" for="PW">
+                      PW
+                      <input class="w-full rounded-md border border-gray-200 px-5 py-2 shadow-sm focus:outline-slate-400"
+                             name="PW" placeholder="*********" required type="password">
+                  </label>
+              </div>
+              <div class="flex justify-between">
+                <div class="w-full text-center">
+                  <a href="/signUp" class="mt-4 text-center text-sm font-medium text-gray-700">아직 계정이 없으신가요?</a>
+              </div>
+              </div>
+              <div>
+                  <output id="error-message" style="color:red"></output>
+                  <input class="w-full cursor-pointer rounded-md py-2 font-sans font-bold antialiased bg-green-500
+                   text-white" type="submit" value="로그인">
+              </div>
+          </div>
+      </form>
+  </div>
 </body>
 </html>
