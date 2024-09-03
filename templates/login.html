@@ -4,7 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
   <link href="/static/output.css" rel="stylesheet">
+  <script>
+    function login() {
+      event.preventDefault();
+      let id = $("#ID").val();
+      let password = $("#PW").val();
+      $.ajax({
+        type: "POST",
+        url: "/api/login",
+        data: {id_give: id, pw_give: password},
+        success: function (response) {
+          console.log("response.data", response['token']);
+          if (response["result"] == "success") {
+            $.cookie('myToken', response['token']);
+              alert( "성공!");
+              window.location.href = '/'
+                          } else {
+                              alert(response['msg'])
+                          }
+        } 
+      })
+    }
+    function signUp() {
+      window.location.href = '/signUp'
+    }
+  </script>
 </head>
 <body class="bg-gray-50">
   <div class="container mx-auto mt-14 flex h-max flex-col items-center">
@@ -19,25 +46,25 @@
                   <label for="ID" class="block pb-2 font-normal text-gray-700">
                       ID
                       <input class="w-full rounded-md border border-gray-200 px-5 py-2 shadow-sm focus:outline-slate-400"
-                             name="ID" placeholder="ID" required type="text">
+                             name="ID" placeholder="ID" required type="text" id = "ID">
                   </label>
               </div>
               <div>
                   <label class="block pb-2 font-normal text-gray-700" for="PW">
                       PW
                       <input class="w-full rounded-md border border-gray-200 px-5 py-2 shadow-sm focus:outline-slate-400"
-                             name="PW" placeholder="*********" required type="password">
+                             name="PW" placeholder="*********" required type="password" id = "PW">
                   </label>
               </div>
               <div class="flex justify-between">
                 <div class="w-full text-center">
-                  <a href="/signUp" class="mt-4 text-center text-sm font-medium text-gray-700">아직 계정이 없으신가요?</a>
+                  <a class="mt-4 text-center text-sm font-medium text-gray-700" onclick="signUp()">아직 계정이 없으신가요?</a>
               </div>
               </div>
               <div>
                   <output id="error-message" style="color:red"></output>
                   <input class="w-full cursor-pointer rounded-md py-2 font-sans font-bold antialiased bg-green-500
-                   text-white" type="submit" value="로그인">
+                   text-white" type="submit" value="로그인" onclick="login()">
               </div>
           </div>
       </form>
