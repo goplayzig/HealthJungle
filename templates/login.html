@@ -7,31 +7,32 @@
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
   <link href="/static/output.css" rel="stylesheet">
+  <script>
+    function login() {
+      event.preventDefault();
+      let id = $("#ID").val();
+      let password = $("#PW").val();
+      $.ajax({
+        type: "POST",
+        url: "/api/login",
+        data: {id_give: id, pw_give: password},
+        success: function (response) {
+          console.log("response.data", response['token']);
+          if (response["result"] == "success") {
+            $.cookie('myToken', response['token']);
+              alert( "성공!");
+              window.location.href = '/'
+                          } else {
+                              alert(response['msg'])
+                          }
+        } 
+      })
+    }
+    function signUp() {
+      window.location.href = '/signUp'
+    }
+  </script>
 </head>
-
-<script>
-  function login() {
-    event.preventDefault();
-    let id = $("#ID").val();
-    let password = $("#PW").val();
-    $.ajax({
-      type: "POST",
-      url: "/api/login",
-      data: {id_give: id, pw_give: password},
-      success: function (response) {
-        console.log("response.data", response['token']);
-        if (response["result"] == "success") {
-          $.cookie('myToken', response['token']);
-            alert( "성공!");
-            window.location.href = '/'
-                        } else {
-                            alert(response['msg'])
-                        }
-      } 
-    })
-    
-  }
-</script>
 <body class="bg-gray-50">
   <div class="container mx-auto mt-14 flex h-max flex-col items-center">
       <form hx-post="/login" hx-target="#error-message" class="flex flex-col items-center">
@@ -57,7 +58,7 @@
               </div>
               <div class="flex justify-between">
                 <div class="w-full text-center">
-                  <a href="/signUp" class="mt-4 text-center text-sm font-medium text-gray-700">아직 계정이 없으신가요?</a>
+                  <a class="mt-4 text-center text-sm font-medium text-gray-700" onclick="signUp()">아직 계정이 없으신가요?</a>
               </div>
               </div>
               <div>
