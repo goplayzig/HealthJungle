@@ -37,7 +37,6 @@ def postSignUp():
     pw = request.form['pw_give']
 
     user_by_id = db.user.find_one({'id': id})
-    user_by_name = db.user.find_one({'name': name})
 
     if user_by_id:
         return jsonify({'result': 'fail', 'msg': '이미 존재하는 아이디입니다.'})
@@ -57,7 +56,7 @@ def postLogin():
     if result:
        payload = {
           'id': id,
-          'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)   
+          'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5)   
        }
        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
        print('id, pw', id,pw)
