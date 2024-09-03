@@ -12,9 +12,15 @@
           <a href="/#" class="mb-6 sm:mb-0">
               <img src="https://cdn-icons-png.flaticon.com/512/11324/11324183.png" class="h-24" alt="Run Logo"/>
           </a>
-          <h1 class="mt-4 pb-5 text-center text-2xl font-semibold">정글에서 함께 운동해요</h1>
+          <h1 class="mt-4 pb-5 text-center text-2xl font-semibold">환영합니다!</h1>
           <!-- Login box -->
           <div class="flex flex-col gap-4 rounded-lg bg-white p-10 text-sm shadow-xl">
+              <div>
+                <label for="name" class="block pb-2 font-normal text-gray-700">
+                     이름
+                     <input class="w-full rounded-md border border-gray-200 px-5 py-2 shadow-sm focus:outline-slate-400" name="name" placeholder="이름" required="" type="text" maxlength="5" pattern="^[가-힣]{1,5}$" title="이름을 입력해주세요.">
+                </label>
+              </div>
               <div>
                   <label for="ID" class="block pb-2 font-normal text-gray-700">
                       ID
@@ -29,11 +35,13 @@
                              name="PW" placeholder="*********" required type="password">
                   </label>
               </div>
-              <div class="flex justify-between">
-                <div class="w-full text-center">
-                  <a href="/signUp" class="mt-4 text-center text-sm font-medium text-gray-700">아직 계정이 없으신가요?</a>
-              </div>
-              </div>
+              <div>
+                <label class="block pb-2 font-normal text-gray-700" for="PW-repeat">
+                    PW 재확인
+                    <input class="w-full rounded-md border border-gray-200 px-5 py-2 shadow-sm focus:outline-slate-400"
+                           name="PW-repeat" placeholder="*********" required type="password">
+                </label>
+            </div>
               <div>
                   <output id="error-message" style="color:red"></output>
                   <input class="w-full cursor-pointer rounded-md py-2 font-sans font-bold antialiased bg-green-500
