@@ -168,7 +168,7 @@
         let selectedDuration = durationElement.options[durationElement.selectedIndex].text;
         let duration = selectedDuration.replace('분', '');
 
-        let date = "2024-09-04";
+        var date = new Date().toISOString().split('T')[0];
         let memo = $("#memo").val();
         console.log("내용들 들어옴 ? ", memo) 
         $.ajax({
@@ -208,7 +208,8 @@
         }
 
       $(document).ready(function () {
-                getWorkOutByDate('2024-09-04');
+                var today = new Date().toISOString().split('T')[0];
+                getWorkOutByDate(today);
             });
 
     </script>
@@ -255,7 +256,12 @@
                 },
                 themeSystem: 'standard',
                 dateClick: function(info) {
-                // 이전에 선택된 셀이 있으면 스타일 초기화
+                  var today = new Date().toISOString().split('T')[0]; // 오늘 날짜
+                if (info.dateStr > today) {
+                    alert("미래의 날짜는 선택할 수 없습니다.");
+                    return; // 미래 날짜 클릭 시 아무 동작도 하지 않음
+                }
+
                 if (selectedCell) {
                     selectedCell.style.backgroundColor = ''; // 스타일 초기화
                 }
