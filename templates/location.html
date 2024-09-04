@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 지도의 기본 스타일 */
+        .map {
+            width: 100%;
+            height: 150px; /* 지도 높이 조정 */
+            background-color: #dcdcdc;
+            border-radius: 10px;
+        }
+        /* 카드 스타일 */
+        .card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden; /* 카드 내용이 넘칠 때 스크롤 방지 */
+            border-radius: 0.5rem;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            margin-bottom: 1rem; /* 카드 간격 조정 */
+        }
+        .card-content {
+            flex-grow: 1;
+            overflow-y: auto; /* 카드 내용이 길 경우 세로 스크롤 */
+            max-height: calc(100% - 4rem); /* 카드의 헤더와 푸터를 제외한 최대 높이 설정 */
+        }
+        .card-footer {
+            margin-top: auto; /* 카드의 내용이 길어질 때 여백을 하단에 위치시킴 */
+            display: flex;
+            justify-content: space-between;
+        }
+        /* 모달 배경 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        /* 모달 내용 */
+        .modal-content {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+        /* 닫기 버튼 */
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: #f3f4f6;
+            border: none;
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .modal-close:hover {
+            background-color: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 px-6 py-8">
+    <header class="flex flex-col items-center mb-8">
+        <a href="/#" class="flex flex-col items-center mb-4">
+            <img src="https://cdn-icons-png.flaticon.com/256/5674/5674918.png" class="h-32" alt="Run Logo"/>
+        </a>
+        <div class="flex items-center gap-4">
+            <a href="#" id="open-create-modal" class="bg-blue-500 text-white py-2 px-4 rounded-lg font-bold flex items-center gap-2 hover:bg-blue-600">
+                <img src="https://cdn-icons-png.flaticon.com/256/102/102918.png" alt="운동하기" class="w-5 h-5"/>
+                같이 운동하기
+            </a>
+        </div>
+    </header>
+
+    <section class="container mx-auto px-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <!-- 카드 1 -->
+            <article class="card">
+                <div class="map mb-4">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345093706!2d144.9537353153157!3d-37.817209979751554!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad65d43f2c5e4e7%3A0x5045675218ce780!2sVictoria!5e0!3m2!1sen!2sau!4v1616110039401!5m2!1sen!2sau"
+                            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div class="card-content">
+                    <div class="flex justify-between items-center mb-4">
+                        <p class="font-bold">User1</p>
+                        <div class="flex gap-2">
+                            <button type="button" class="p-1 rounded bg-gray-300 hover:bg-gray-400">
+                                <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정" class="w-5 h-5"/>
+                            </button>
+                            <button type="button" class="p-1 rounded bg-gray-300 hover:bg-gray-400">
+                                <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제" class="w-6 h-6"/>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">2024-09-10</p>
+                    <h3 class="text-lg font-semibold mb-2">실외 달리기 30분</h3>
+                    <p>5km 캠퍼스 런닝</p>
+                </div>
+                <div class="card-footer">
+                </div>
+            </article>
+
+            <!-- 카드 2 -->
+            <article class="card">
+                <div class="map mb-4">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345093706!2d144.9537353153157!3d-37.817209979751554!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad65d43f2c5e4e7%3A0x5045675218ce780!2sVictoria!5e0!3m2!1sen!2sau!4v1616110039401!5m2!1sen!2sau"
+                            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div class="card-content">
+                    <div class="flex justify-between items-center mb-4">
+                        <p class="font-bold">User2</p>
+                        <div class="flex gap-2">
+                            <button type="button" class="p-1 rounded bg-gray-300 hover:bg-gray-400">
+                                <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정" class="w-5 h-5"/>
+                            </button>
+                            <button type="button" class="p-1 rounded bg-gray-300 hover:bg-gray-400">
+                                <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제" class="w-6 h-6"/>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">2024-09-10</p>
+                    <h3 class="text-lg font-semibold mb-2">실내 달리기 30분</h3>
+                    <p>헬스장 런닝머신 3km</p>
+                </div>
+                <div class="card-footer">
+                </div>
+            </article>
+
+            <!-- 카드 3 -->
+            <article class="card">
+                <div class="map mb-4">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345093706!2d144.9537353153157!3d-37.817209979751554!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad65d43f2c5e4e7%3A0x5045675218ce780!2sVictoria!5e0!3m2!1sen!2sau!4v1616110039401!5m2!1sen!2sau"
+                            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div class="card-content">
+                    <div class="flex justify-between items-center mb-4">
+                        <p class="font-bold">User3</p>
+                        <div class="flex gap-2">
+                            <button type="button" class="p-1 rounded bg-gray-300 hover:bg-gray-400">
+                                <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정" class="w-5 h-5"/>
+                            </button>
+                            <button type="button" class="p-1 rounded bg-gray-300 hover:bg-gray-400">
+                                <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제" class="w-6 h-6"/>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">2024-09-10</p>
+                    <h3 class="text-lg font-semibold mb-2">실내 달리기 30분</h3>
+                    <p>헬스장 런닝머신 3km</p>
+                </div>
+                <div class="card-footer">
+                </div>
+            </article>
+
+            <!-- 카드 4 -->
+            <article class="card">
+                <div class="map mb-4">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345093706!2d144.9537353153157!3d-37.817209979751554!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad65d43f2c5e4e7%3A0x5045675218ce780!2sVictoria!5e0!3m2!1sen!2sau!4v1616110039401!5m2!1sen!2sau"
+                            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div class="card-content">
+                    <div class="flex justify-between items-center mb-4">
+                        <p class="font-bold">User4</p>
+                        <div class="flex gap-2">
+                            <button type="button" class="p-1 rounded bg-gray-300 hover:bg-gray-400">
+                                <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정" class="w-5 h-5"/>
+                            </button>
+                            <button type="button" class="p-1 rounded bg-gray-300 hover:bg-gray-400">
+                                <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제" class="w-6 h-6"/>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">2024-09-10</p>
+                    <h3 class="text-lg font-semibold mb-2">실내 달리기 30분</h3>
+                    <p>헬스장 런닝머신 3km</p>
+                </div>
+                <div class="card-footer">
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- 운동 모임 모달 -->
+    <div id="create-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCreateModal()">X</button>
+            <h2 class="text-2xl font-semibold mb-4">같이 운동하기</h2>
+            <form id="modal-form">
+                <div class="mb-4">
+                    <label for="title" class="block text-sm font-medium text-gray-700">제목</label>
+                    <input type="text" id="title" name="title" class="mt-1 block w-full border border-gray-300 rounded-lg p-2" placeholder="운동 모임 제목"/>
+                </div>
+                <div class="mb-4">
+                    <label for="description" class="block text-sm font-medium text-gray-700">설명</label>
+                    <textarea id="description" name="description" class="mt-1 block w-full border border-gray-300 rounded-lg p-2" rows="4" placeholder="모임에 대한 설명"></textarea>
+                </div>
+                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg font-bold hover:bg-blue-600">올리기</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openCreateModal() {
+            document.getElementById('create-modal').style.display = 'flex';
+        }
+
+        function closeCreateModal() {
+            document.getElementById('create-modal').style.display = 'none';
+        }
+
+        document.getElementById('open-create-modal').addEventListener('click', function(event) {
+            event.preventDefault();
+            openCreateModal();
+        });
+
+        document.getElementById('modal-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('폼이 제출되었습니다.');
+            closeCreateModal();
+        });
+    </script>
+</body>
+</html>
