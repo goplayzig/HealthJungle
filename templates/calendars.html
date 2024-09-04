@@ -141,16 +141,36 @@
       }
     </style>
     <script>
+      function getWorkOutByDate(date) {
+        $.ajax({
+        url: '/api/calendar',
+        type: 'GET',
+        data: { date: date }, 
+        success: function(response) {
+          console.log("success type")
+        },
+        error: function(xhr) {
+            console.log('Error:', xhr.responseText);
+        }
+    });
+      }
+
       function postWorkOut() {
         event.preventDefault();
-        let type = 1
-        let time = 10
-        let userID = "test1"
-        let date = "2024-09-04"
+        let workOutTypeElement = document.getElementById("workOut");
+        let selectedWorkOut = workOutTypeElement.selectedIndex;
+
+        let durationElement = document.getElementById("duration");
+        let selectedDuration = durationElement.options[durationElement.selectedIndex].text;
+        let duration = selectedDuration.replace('분', '');
+
+        let date = "2024-09-04";
+        let memo = $("#memo").val();
+        console.log("내용들 들어옴 ? ", memo) 
         $.ajax({
           type: "POST",
           url: "/api/calendar",
-          data: {type_give: type, time_give: time, userId_give: userID, date: date},
+          data: {type_give: selectedWorkOut, time_give: duration, date: date, memo_give: memo},
           success: function (response) {
             if (response["result"] == "success") {
               // alert(response["msg"]);
@@ -161,6 +181,12 @@
             }
         })
       }
+
+      $(document).ready(function () {
+                // $("#card-list").html("");
+                getWorkOutByDate('2024-09-04');
+            });
+
     </script>
 </head>
 <body>
@@ -188,41 +214,9 @@
                     </div>
                         <p class="card-date">2024.09.03</p>
                         <p class="card-time">실외 달리기 30분</p>
-                        <p class="card-text">5km 캠퍼스 런닝</p>
-                </div>
-
-                <div class="card">
-                  <div class="card-header">
-                    <p class="card-user">User2</p>
-                    <div class="card-buttons">
-                      <button type="button" id="edit-box" class="btn-edit" onclick="openEdit()">
-                        <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정">
-                      </button>
-                      <button type="button" id="delete-box" class="btn-delete" onclick="deleteCard()">
-                        <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제">
-                      </button>
-                    </div>
-                </div>
-                    <p class="card-date">2024.09.03</p>
-                    <p class="card-time">실내 달리기 30분</p>
-                    <p class="card-text">헬스장 런닝 머신 3km!</p>
-            </div>
-
-            <div class="card">
-              <div class="card-header">
-                <p class="card-user">User3</p>
-                <div class="card-buttons">
-                  <button type="button" id="edit-box" class="btn-edit" onclick="openEdit()">
-                    <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정">
-                  </button>
-                  <button type="button" id="delete-box" class="btn-delete" onclick="deleteCard()">
-                    <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제">
-                  </button>
+                        <p class="card-text">5km 캠퍼스 런닝ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ<br>ㅁㄴㅇㄴㅁㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ56ㅁㄴ6ㅇ526ㅁㄴㅇ6ㅁ<br>ㄴ1ㅇ56ㅁㄴㅇ4156ㅁㄴ4ㅇㅁ6ㄴ5ㅇ4ㅁㄴ56ㅇ4ㅁㄴ5525558288348465ㄴㅁㅇ<br>4ㅁㄴ56ㅇ45ㅁ<br>6ㄴㅇ46ㅁ5</p>
                 </div>
             </div>
-                <p class="card-date">2024.09.03</p>
-                <p class="card-time">근력 운동 10분</p>
-                <p class="card-text">힘들어요</p>
         </div>
             </div>
         </div>
@@ -288,17 +282,30 @@
             <form class="space-y-4">
                 <div>
                     <label class="block text-lg font-semibold mb-2" for="exercise">종목</label>
-                    <select id="exercise" class="w-full border border-gray-300 rounded px-4 py-2">
+                    <select id="workOut" class="w-full border border-gray-300 rounded px-4 py-2">
                         <option>실내 런닝</option>
+                        <option>실내 걷기</option>
+                        <option>실외 런닝</option>
+                        <option>실외 걷기</option>
+                        <option>계단 오르기</option>
                     </select>
                 </div>
                 
                 <div>
                     <label class="block text-lg font-semibold mb-2" for="duration">운동 시간 (분)</label>
                     <select id="duration" class="w-full border border-gray-300 rounded px-4 py-2">
+                      <option>5분</option>
                       <option>10분</option>
+                      <option>15분</option>
                       <option>20분</option>
+                      <option>25분</option>
                       <option>30분</option>
+                      <option>35분</option>
+                      <option>40분</option>
+                      <option>45분</option>
+                      <option>50분</option>
+                      <option>55분</option>
+                      <option>60분</option>
                   </select>
                 </div>
                 
