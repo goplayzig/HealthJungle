@@ -30,8 +30,8 @@
     overflow: hidden;
     background-color: rgba(215, 215, 215, 0.886);
     padding: 1rem;
-    width: 300px; /* 카드 너비 고정 */
-    height: 200px; /* 카드 높이 고정 */
+    width: 300px; 
+    height: 200px;
     display: flex;
     flex-direction: column;
     justify-content: space-between; /* 내용이 카드 안에서 균등하게 분배되도록 */
@@ -147,7 +147,11 @@
         type: 'GET',
         data: { date: date }, 
         success: function(response) {
-          console.log("success type")
+          let workOut = response["workOuts"];
+          $("#card-collection").html("");
+          for (let i = 0; i < workOut.length; i++) {
+            makeCard(workOut[i].name, workOut[i].date, workOut[i].time, workOut[i].type, workOut[i].memo, workOut[i].id);
+          }
         },
         error: function(xhr) {
             console.log('Error:', xhr.responseText);
@@ -182,8 +186,28 @@
         })
       }
 
+      function makeCard(name, date, time, type, memo, id) {
+                let tempHtml = `<div class="card-container" id='${id}'>
+                    <div class="card">
+                      <div class="card-header">
+                        <p class="card-user">${name}</p>
+                        <div class="card-buttons">
+                          <button type="button" id="edit-box" class="btn-edit" onclick="openEdit()">
+                            <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정">
+                          </button>
+                          <button type="button" id="delete-box" class="btn-delete" onclick="deleteCard()">
+                            <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제">
+                          </button>
+                        </div>
+                    </div>
+                        <p class="card-date">${date}</p>
+                        <p class="card-time">${time}</p>
+                        <p class="card-text">${memo}</p>
+                </div>`;
+                $("#card-collection").append(tempHtml);
+        }
+
       $(document).ready(function () {
-                // $("#card-list").html("");
                 getWorkOutByDate('2024-09-04');
             });
 
@@ -198,24 +222,7 @@
         </div>
 
         <!-- 카드 박스 -->
-        <div class="w-full max-w-3xl p-4">
-                <div class="card-container">
-                    <div class="card">
-                      <div class="card-header">
-                        <p class="card-user">User1</p>
-                        <div class="card-buttons">
-                          <button type="button" id="edit-box" class="btn-edit" onclick="openEdit()">
-                            <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정">
-                          </button>
-                          <button type="button" id="delete-box" class="btn-delete" onclick="deleteCard()">
-                            <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제">
-                          </button>
-                        </div>
-                    </div>
-                        <p class="card-date">2024.09.03</p>
-                        <p class="card-time">실외 달리기 30분</p>
-                        <p class="card-text">5km 캠퍼스 런닝ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ<br>ㅁㄴㅇㄴㅁㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ56ㅁㄴ6ㅇ526ㅁㄴㅇ6ㅁ<br>ㄴ1ㅇ56ㅁㄴㅇ4156ㅁㄴ4ㅇㅁ6ㄴ5ㅇ4ㅁㄴ56ㅇ4ㅁㄴ5525558288348465ㄴㅁㅇ<br>4ㅁㄴ56ㅇ45ㅁ<br>6ㄴㅇ46ㅁ5</p>
-                </div>
+        <div class="w-full max-w-3xl p-4" id="card-collection">     
             </div>
         </div>
             </div>
@@ -226,6 +233,7 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            var selectedCell = null;
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
@@ -245,7 +253,42 @@
                 buttonText: {
                     customButton: '운동 기록하기'
                 },
-                themeSystem: 'standard'
+                themeSystem: 'standard',
+                dateClick: function(info) {
+                // 이전에 선택된 셀이 있으면 스타일 초기화
+                if (selectedCell) {
+                    selectedCell.style.backgroundColor = ''; // 스타일 초기화
+                }
+
+                // 클릭된 날짜 셀을 선택하여 스타일 적용
+                var cell = document.querySelector('[data-date="' + info.dateStr + '"]');
+                if (cell) {
+                    cell.style.backgroundColor = 'lightblue'; 
+                    selectedCell = cell; // 선택된 셀 저장
+                    getWorkOutByDate(info.dateStr);
+                }
+                },
+                datesSet: function() {
+                // prev 버튼 클릭 이벤트
+                document.querySelector('.fc-prev-button').addEventListener('click', function() {
+                  var currentMonth = calendar.getDate().getMonth() + 1; 
+                    console.log('이전 달로 이동', calendar.getDate().getMonth());
+                });
+
+                // next 버튼 클릭 이벤트
+                document.querySelector('.fc-next-button').addEventListener('click', function() {
+                  var currentMonth = calendar.getDate().getMonth() + 1; // 월은 0부터 시작하므로 +1
+                    console.log('다음 달로 이동');
+                    // 여기에 원하는 이벤트 코드를 추가하세요
+                });
+
+                // today 버튼 클릭 이벤트
+                document.querySelector('.fc-today-button').addEventListener('click', function() {
+                    console.log('오늘 날짜로 이동');
+                    var currentMonth = calendar.getDate().getMonth() + 1; // 월은 0부터 시작하므로 +1
+                    // 여기에 원하는 이벤트 코드를 추가하세요
+                });
+            }
             });
             
             calendar.render();
