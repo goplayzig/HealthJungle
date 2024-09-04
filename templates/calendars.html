@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="/static/output.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-    crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <!-- FullCalendar CSS -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
 
@@ -142,6 +140,28 @@
         cursor: pointer;
       }
     </style>
+    <script>
+      function postWorkOut() {
+        event.preventDefault();
+        let type = 1
+        let time = 10
+        let userID = "test1"
+        let date = "2024-09-04"
+        $.ajax({
+          type: "POST",
+          url: "/api/calendar",
+          data: {type_give: type, time_give: time, userId_give: userID, date: date},
+          success: function (response) {
+            if (response["result"] == "success") {
+              // alert(response["msg"]);
+              window.location.href = '/'
+                          } else {
+                            alert(response['msg'])
+                          } 
+            }
+        })
+      }
+    </script>
 </head>
 <body>
   
@@ -287,7 +307,7 @@
                     <textarea id="memo" class="w-full border border-gray-300 rounded px-4 py-2" rows="4"></textarea>
                 </div>
                 
-                <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded">운동 기록하기</button>
+                <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded" onClick="postWorkOut()">운동 기록하기</button>
             </form>
         </div>
     </div>

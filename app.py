@@ -20,13 +20,13 @@ def home():
         user_info = db.user.find_one({"id": payload['id']})
         print("cookie checked")
       #   return render_template('signUp.html', nickname=user_info["name"])
-        return render_template('signUp.html')
+        return render_template('calendars.html')
    except jwt.ExpiredSignatureError:
       print("cookie expired")
       return render_template('login.html')
       #   return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
    except jwt.exceptions.DecodeError:
-      print("cookie undifined")
+      print("cookie undifned")
       return render_template('login.html')
       #   return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
 
@@ -65,9 +65,25 @@ def postLogin():
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
     
+@app.route('/api/calendar', methods=['POST'])
+def postWorkOut():
+    type = request.form['type_give']
+    time = request.form['time_give']
+    userId = request.form['userId_give']
+    date = request.form['date']
+    result = db.workOut.insert_one({'type': type, 'time': time, 'userId': userId, 'date': date})
+    if result:
+        return jsonify({'result': 'success'})
+    else:
+        return jsonify({'result': 'fail', 'msg': '운동 기록에 실패하였습니다.'})
+    
 @app.route('/signUp')
 def signUp():
       return render_template('signUp.html')
+
+@app.route('/calendar')
+def calendar():
+    return render_template('calendars.html')
 
 if __name__ == '__main__':  
    app.run('0.0.0.0',port=5001,debug=True)
