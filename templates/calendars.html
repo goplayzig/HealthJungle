@@ -141,22 +141,23 @@
       }
     </style>
     <script>
-      function getWorkOutByDate(date) {
-        $.ajax({
-        url: '/api/calendar',
-        type: 'GET',
-        data: { date: date }, 
-        success: function(response) {
-          let workOut = response["workOuts"];
-          $("#card-collection").html("");
-          for (let i = 0; i < workOut.length; i++) {
-            makeCard(workOut[i].name, workOut[i].date, workOut[i].time, workOut[i].type, workOut[i].memo, workOut[i].id);
-          }
-        },
-        error: function(xhr) {
-            console.log('Error:', xhr.responseText);
-        }
-    });
+     function getWorkOutByDate(date) {
+      const encodedDate = encodeURIComponent(date);
+      const url = `/calendar?date=${encodedDate}`;
+      fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.text();  // HTML을 텍스트로 처리
+        })
+        .then(html => {
+            // HTML 부분을 적절한 요소에 삽입
+            document.getElementById('card-collection').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
       }
 
       function postWorkOut() {
@@ -186,32 +187,10 @@
         })
       }
 
-      function makeCard(name, date, time, type, memo, id) {
-                let tempHtml = `<div class="card-container" id='${id}'>
-                    <div class="card">
-                      <div class="card-header">
-                        <p class="card-user">${name}</p>
-                        <div class="card-buttons">
-                          <button type="button" id="edit-box" class="btn-edit" onclick="openEdit()">
-                            <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정">
-                          </button>
-                          <button type="button" id="delete-box" class="btn-delete" onclick="deleteCard()">
-                            <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제">
-                          </button>
-                        </div>
-                    </div>
-                        <p class="card-date">${date}</p>
-                        <p class="card-time">${time}</p>
-                        <p class="card-text">${memo}</p>
-                </div>`;
-                $("#card-collection").append(tempHtml);
-        }
-
       $(document).ready(function () {
-                var today = new Date().toISOString().split('T')[0];
-                getWorkOutByDate(today);
-            });
-
+                      var today = new Date().toISOString().split('T')[0];
+                      getWorkOutByDate(today);
+      });
     </script>
 </head>
 <body>
@@ -221,9 +200,30 @@
         <div class="w-full max-w-3xl p-4 bg-white shadow-lg rounded-lg mb-4">
             <div id="calendar"></div>
         </div>
-
         <!-- 카드 박스 -->
-        <div class="w-full max-w-3xl p-4" id="card-collection">     
+        <div class="w-full max-w-3xl p-4" id="card-collection">
+          {% for card in work_outs %}
+          <div class="card-container" id="{{ card._id }}">
+              <div class="card">
+                  <div class="card-header">
+                      <p class="card-user">{{ card.name }}</p>
+                      <div class="card-buttons">
+                          {% if card.userId == user_id %}
+                              <button type="button" class="btn-edit" onclick="openEdit('{{ card._id }}')">
+                                  <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정">
+                              </button>
+                              <button type="button" class="btn-delete" onclick="deleteCard('{{ card._id }}')">
+                                  <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제">
+                              </button>
+                          {% endif %}
+                      </div>
+                  </div>
+                  <p class="card-date">{{ card.date }} 22</p>
+                  <p class="card-time">{{ card.time }}</p>
+                  <p class="card-text">{{ card.memo }}</p>
+              </div>
+          </div>
+      {% endfor %}     
             </div>
         </div>
             </div>
@@ -259,7 +259,7 @@
                   var today = new Date().toISOString().split('T')[0]; // 오늘 날짜
                 if (info.dateStr > today) {
                     alert("미래의 날짜는 선택할 수 없습니다.");
-                    return; // 미래 날짜 클릭 시 아무 동작도 하지 않음
+                    return;
                 }
 
                 if (selectedCell) {

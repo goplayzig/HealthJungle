@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, render_template_string
 from pymongo import MongoClient
 from flask.json.provider import JSONProvider
 import json
@@ -103,26 +103,62 @@ def postWorkOut():
         return render_template('login.html')
     except jwt.exceptions.DecodeError:
         print("cookie undifned")
-        return render_template('login.html')
+        return render_template('login.html')\
+        
+@app.route('/calendar', methods=['GET'])
+def calendar():
+    date = request.args.get('date')
+    user_id = 'test2'
     
-@app.route('/api/calendar', methods=['GET'])
-def getWorkOutByDate():
-        date = request.args.get('date')
-        if date:
-            workOut = db.workOut.find({'date': date})
-            workOuts = list(workOut)
-            print("WWW", workOuts)
-            return jsonify({'result': 'success', 'workOuts': workOuts}) 
-        else:   
-            return jsonify({'result': 'fail', 'message': 'Date parameter is missing'})
+    if date:
+        work_outs = list(db.workOut.find({'date': date}))
+        for item in work_outs:
+            item['_id'] = str(item['_id'])
+        print(work_outs, user_id)
+        html_content = render_template_string("""
+    {% for work_out in work_outs %}
+    <div class="card-container" id="{{ work_out._id }}">
+        <div class="card">
+            <div class="card-header">
+                <p class="card-user">{{ work_out.name }}</p>
+                <div class="card-buttons">
+                    {% if work_out.userId == user_id %}
+                    <button type="button" class="btn-edit" onclick="openEdit('{{ work_out._id }}')">
+                        <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정">
+                    </button>
+                    <button type="button" class="btn-delete" onclick="deleteCard('{{ work_out._id }}')">
+                        <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제">
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            <p class="card-date">{{ work_out.date }}</p>
+            <p class="card-time">{{ work_out.time }}</p>
+            <p class="card-text">{{ work_out.memo }}</p>
+        </div>
+    </div>
+    {% endfor %}
+    """, work_outs=work_outs, user_id=user_id)
+
+        return html_content
+    else:
+        return "Date parameter is missing", 400
+
+    
+# @app.route('/api/calendar', methods=['GET'])
+# def getWorkOutByDate():
+#         date = request.args.get('date')
+#         if date:
+#             workOut = db.workOut.find({'date': date})
+#             workOuts = list(workOut)
+#             print("WWW", workOuts)
+#             return jsonify({'result': 'success', 'workOuts': workOuts}) 
+#         else:   
+#             return jsonify({'result': 'fail', 'message': 'Date parameter is missing'})
     
 @app.route('/signUp')
 def signUp():
       return render_template('signUp.html')
-
-@app.route('/calendar')
-def calendar():
-    return render_template('calendars.html')
 
 if __name__ == '__main__':  
    app.run('0.0.0.0',port=5001,debug=True)
