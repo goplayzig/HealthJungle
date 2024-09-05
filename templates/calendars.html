@@ -9,8 +9,8 @@
     <!-- FullCalendar CSS -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
 
-    <style>  
-    body {
+    <style>
+      body {
         margin: 0;
         font-family: Arial, sans-serif;
       }
@@ -23,92 +23,92 @@
         padding: 1rem;
       }
 
-      /* 카드 스타일 */
+      /* 카드 컨테이너 스타일 */
+      .card-container {
+        display: flex;
+        flex-wrap: wrap; /* 카드가 한 줄에 가득 차면 자동으로 줄 바꿈 */
+        gap: 1rem; /* 카드 간의 간격 */
+        justify-content: space-between; /* 카드 간의 여백을 균등하게 분배 */
+      }
+
+      /* 각 카드의 스타일 */
       .card {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    border-radius: 0.375rem;
-    overflow: hidden;
-    background-color: rgba(215, 215, 215, 0.886);
-    padding: 1rem;
-    width: 300px; 
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* 내용이 카드 안에서 균등하게 분배되도록 */
-    box-sizing: border-box; /* 패딩과 테두리를 카드의 총 너비와 높이에 포함시킴 */
-}
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 0.75rem;
+        background-color: #ffffff;
+        padding: 1.5rem;
+        width: calc(33.333% - 1rem); /* 3개 카드가 가로로 나란히 배치될 수 있도록 너비 조정 */
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
 
       .card-user {
         font-weight: bold;
-        margin-bottom: 0.1rem;
-        overflow: hidden; /* 내용이 넘치지 않도록 */
-        text-overflow: ellipsis; /* 내용이 넘칠 경우 ...으로 표시 */
-        white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 */
+        font-size: 1.125rem;
+        color: #333;
       }
 
-      .card-date {
-        overflow: hidden; /* 내용이 넘치지 않도록 */
-        text-overflow: ellipsis; /* 내용이 넘칠 경우 ...으로 표시 */
-        white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 */
-      }
-
+      .card-date,
       .card-time {
-        margin-bottom: 1rem;
-        overflow: hidden; /* 내용이 넘치지 않도록 */
-        text-overflow: ellipsis; /* 내용이 넘칠 경우 ...으로 표시 */
-        white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 */
+        font-size: 0.875rem;
+        color: #555;
       }
 
       .card-text {
-        overflow: hidden; /* 내용이 넘치지 않도록 */
-        text-overflow: ellipsis; /* 내용이 넘칠 경우 ...으로 표시 */
-        white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 */
-        flex-grow: 1; /* 내용이 카드의 나머지 공간을 채우도록 */
+        font-size: 1rem;
+        color: #333;
+        flex-grow: 1;
       }
 
-      /* 카드 레이아웃 스타일 */
-      .card-container {
+      .card-buttons {
         display: flex;
-        justify-content: space-between; /* 카드 사이의 간격을 균등하게 분배 */
-        gap: 1rem; /* 카드 사이의 간격 */
-        flex-wrap: nowrap; /* 카드가 줄 바꿈되지 않도록 */
-        width: 100%;
-        max-width: 960px; /* 카드 컨테이너의 최대 너비 설정 */
-        margin: 0 auto; /* 중앙 정렬 */
+        gap: 0.5rem;
+        align-items: center;
       }
 
-/* 카드 상단 스타일 */
-.card-header {
-    display: flex;
-    justify-content: space-between; /* 사용자 정보와 버튼을 양 끝으로 배치 */
-    align-items: center; /* 세로 중앙 정렬 */
-    margin-bottom: 1rem; /* 카드 상단과 내용 사이 간격 */
-}
+      .card-buttons button {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+      }
 
-/* 버튼 스타일 */
-.card-buttons {
-    display: flex;
-    gap: 0.5rem; /* 버튼 사이 간격 */
-    align-items: center; /* 버튼 세로 중앙 정렬 */
-}
+      .card-buttons .btn-edit img,
+      .card-buttons .btn-delete img {
+        width: 24px;
+        height: 24px;
+      }
 
-.card-buttons button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0; /* 패딩 제거 */
-    margin: 0; /* 마진 제거 */
-}
-
-.card-buttons .btn-edit img {
-    width: 30px; /* 수정 버튼 이미지 너비 */
-    height: 30px; /* 수정 버튼 이미지 높이 */
-}
-
-.card-buttons .btn-delete img {
-    width: 24px; /* 삭제 버튼 이미지 너비 */
-    height: 24px; /* 삭제 버튼 이미지 높이 */
-}
+      /* 배너 버튼 스타일 */
+      .btn-banner {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        color: #FFFFFF;
+        font-size: 1.125rem;
+        text-align: center;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        transition: background-color 0.3s;
+        width: 100%;
+        margin: 0 auto;
+        background: linear-gradient(to right, #0F1A49, #1E3A8A);
+      }
 
       /* 모달 스타일 */
       .modal-overlay {
@@ -169,7 +169,7 @@
         let selectedDuration = durationElement.options[durationElement.selectedIndex].text;
         let duration = selectedDuration.replace('분', '');
 
-        var date = new Date().toISOString().split('T')[0];
+        var date = getKoreanNowDate()
         let memo = $("#memo").val();
         console.log("내용들 들어옴 ? ", memo) 
         $.ajax({
@@ -177,18 +177,90 @@
           url: "/api/calendar",
           data: {type_give: selectedWorkOut, time_give: duration, date: date, memo_give: memo},
           success: function (response) {
-            if (response["result"] == "success") {
-              // alert(response["msg"]);
-              window.location.href = '/'
-                          } else {
-                            alert(response['msg'])
-                          } 
+            if (response["result"] == "success") { 
+              var today = getKoreanNowDate();
+              getWorkOutByDate(today);
+              modalOff();
             }
+          }
         })
       }
 
+      function deleteWorkOut(id) {
+        $.ajax({
+            type: "DELETE",
+            url: `/calendar?id=${id}`,
+            success: function (response) {
+                console.log(response);
+                alert('삭제되었습니다.');
+                window.location.reload();
+            }
+        })
+        }
+
+      function updateWorkOut(id, workOut, duration, memo) {
+        event.preventDefault();
+        $.ajax({
+          type: "POST",
+          url: `/workOut/edit`,
+          data: {id: id, type: workOut, time: duration, memo: memo},
+          success: function (response) {
+              console.log(response);
+              alert('수정 되었습니다.');
+              window.location.reload();
+          }
+      })
+      }
+      function openEdit(id, initialWorkOut, initialDuration, initialMemo) {
+        // 초기 값 설정
+        document.getElementById("workOut").selectedIndex = initialWorkOut;
+
+        const selectElement = document.getElementById("duration");
+        for (let i = 0; i < selectElement.options.length; i++) {
+            let optionText = selectElement.options[i].text;
+            let optionValue = parseInt(optionText.replace("분", "").trim(), 10);
+
+            if (optionValue === initialDuration) {
+                selectElement.selectedIndex = i;
+                break;
+            }
+        }
+
+        document.getElementById("memo").value = initialMemo;
+
+        // 버튼 텍스트 변경 및 onClick 이벤트 수정
+        const button = document.getElementById("submitWorkOut");
+        button.innerText = "운동 수정하기";
+
+        // 새로 입력된 값으로 업데이트
+        button.onclick = function() {
+            // 수정된 값을 가져옴
+            const updatedWorkOut = document.getElementById("workOut").value;  // 운동 종류
+            const updatedDurationText = document.getElementById("duration").options[document.getElementById("duration").selectedIndex].text;
+            const updatedDuration = parseInt(updatedDurationText.replace("분", "").trim(), 10);  // 운동 시간
+            const updatedMemo = document.getElementById("memo").value;  // 메모
+
+            // updateWorkOut 함수 호출, 수정된 값 전달
+            updateWorkOut(id, updatedWorkOut, updatedDuration, updatedMemo);
+        };
+
+        // 모달 활성화
+        modalOn();
+    }
+      function initModal() {
+        document.getElementById("workOut").selectedIndex = 0;
+        document.getElementById("duration").selectedIndex = 0;
+        document.getElementById("memo").value = ""
+        const button = document.getElementById("submitWorkOut");
+        button.innerText = "운동 기록하기";
+        button.onclick = function() {
+            postWorkOut();
+        };
+      }
+        
+
       $(document).ready(function () {
-                      var today = new Date().toISOString().split('T')[0];
+                      var today = getKoreanNowDate();
                       getWorkOutByDate(today);
       });
     </script>
@@ -202,28 +274,6 @@
         </div>
         <!-- 카드 박스 -->
         <div class="w-full max-w-3xl p-4" id="card-collection">
-          {% for card in work_outs %}
-          <div class="card-container" id="{{ card._id }}">
-              <div class="card">
-                  <div class="card-header">
-                      <p class="card-user">{{ card.name }}</p>
-                      <div class="card-buttons">
-                          {% if card.userId == user_id %}
-                              <button type="button" class="btn-edit" onclick="openEdit('{{ card._id }}')">
-                                  <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정">
-                              </button>
-                              <button type="button" class="btn-delete" onclick="deleteCard('{{ card._id }}')">
-                                  <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제">
-                              </button>
-                          {% endif %}
-                      </div>
-                  </div>
-                  <p class="card-date">{{ card.date }} 22</p>
-                  <p class="card-time">{{ card.time }}</p>
-                  <p class="card-text">{{ card.memo }}</p>
-              </div>
-          </div>
-      {% endfor %}     
             </div>
         </div>
             </div>
@@ -247,6 +297,7 @@
                     customButton: {
                         text: '운동 기록하기',
                         click: function() {
+                            initModal();
                             modalOn();
                         }
                     }
@@ -256,7 +307,7 @@
                 },
                 themeSystem: 'standard',
                 dateClick: function(info) {
-                  var today = new Date().toISOString().split('T')[0]; // 오늘 날짜
+                  var today = getKoreanNowDate(); // 오늘 날짜
                 if (info.dateStr > today) {
                     alert("미래의 날짜는 선택할 수 없습니다.");
                     return;
@@ -311,6 +362,7 @@
         }
 
         function modalOff() {
+          initModal();
             document.getElementById("calendar-container").style.opacity = "1";
             document.getElementById("modal").style.display = "none";
         }
@@ -320,6 +372,17 @@
                 modalOff();
             });
         });
+
+    function getKoreanNowDate() {
+    let now = new Date();
+    let offset = 9 * 60;
+    let koreanTime = new Date(now.getTime() + offset * 60 * 1000);
+    let year = koreanTime.getFullYear();
+    let month = String(koreanTime.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작
+    let day = String(koreanTime.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
     </script>
 
     <!-- 오운완 자랑하기 Modal Section -->
@@ -357,13 +420,12 @@
                       <option>60분</option>
                   </select>
                 </div>
-                
                 <div>
                     <label class="block text-lg font-semibold mb-2" for="memo">메모</label>
                     <textarea id="memo" class="w-full border border-gray-300 rounded px-4 py-2" rows="4"></textarea>
                 </div>
                 
-                <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded" onClick="postWorkOut()">운동 기록하기</button>
+                <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded" id= "submitWorkOut" onClick="postWorkOut()">운동 기록하기</button>
             </form>
         </div>
     </div>

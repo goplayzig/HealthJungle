@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, render_template_string
 from pymongo import MongoClient
+from bson import ObjectId
 from flask.json.provider import JSONProvider
 import json
 import hashlib
@@ -14,7 +15,7 @@ SECRET_KEY = '1g8t4@u%k4@!k9@jh#j0$'
 
 class CustomJSONEncoder(json.JSONEncoder):
     def default(self, o):
-        if isinstance(o, object):
+        if isinstance(o, ObjectId):
             return str(o)
         return json.JSONEncoder.default(self, o)
 
@@ -103,46 +104,83 @@ def postWorkOut():
         return render_template('login.html')
     except jwt.exceptions.DecodeError:
         print("cookie undifned")
-        return render_template('login.html')\
+        return render_template('login.html')
+    
+@app.route('/calendar', methods=['DELETE'])
+def deleteWorkOut():
+    id = request.args.get('id')
+    db.workOut.delete_one({'_id': ObjectId(id)})
+    return jsonify({'result': 'success'})
         
 @app.route('/calendar', methods=['GET'])
 def calendar():
     date = request.args.get('date')
-    user_id = 'test2'
-    
-    if date:
-        work_outs = list(db.workOut.find({'date': date}))
-        for item in work_outs:
-            item['_id'] = str(item['_id'])
-        print(work_outs, user_id)
-        html_content = render_template_string("""
+
+    token_receive = request.cookies.get('myToken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms = ['HS256'])
+        user_id = payload['id']
+        if date:
+            work_outs = list(db.workOut.find({'date': date}))
+            for item in work_outs:
+                item['_id'] = str(item['_id'])
+            print(work_outs, user_id)
+            html_content = render_template_string("""
+       <div class="card-container">
     {% for work_out in work_outs %}
-    <div class="card-container" id="{{ work_out._id }}">
-        <div class="card">
-            <div class="card-header">
-                <p class="card-user">{{ work_out.name }}</p>
-                <div class="card-buttons">
-                    {% if work_out.userId == user_id %}
-                    <button type="button" class="btn-edit" onclick="openEdit('{{ work_out._id }}')">
-                        <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정">
-                    </button>
-                    <button type="button" class="btn-delete" onclick="deleteCard('{{ work_out._id }}')">
-                        <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제">
-                    </button>
-                    {% endif %}
-                </div>
+    <div class="card" id="{{ work_out._id }}">
+        <div class="card-header">
+            <p class="card-user">{{ work_out.name }}</p>
+            <div class="card-buttons">
+                {% if work_out.userId == user_id %}
+                <button type="button" class="btn-edit" onclick="openEdit('{{ work_out._id }}', '{{ work_out.type }}', '{{ work_out.time }}', '{{ work_out.memo }}')">
+                    <img src="https://www.svgrepo.com/show/535562/pencil-square.svg" alt="수정">
+                </button>
+                <button type="button" class="btn-delete" onclick="deleteWorkOut('{{ work_out._id }}')">
+                    <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="삭제">
+                </button>
+                {% endif %}
             </div>
-            <p class="card-date">{{ work_out.date }}</p>
-            <p class="card-time">{{ work_out.time }}</p>
-            <p class="card-text">{{ work_out.memo }}</p>
         </div>
+        <p class="card-date">{{ work_out.date }}</p>
+        <p class="card-time">{{ work_out.time }}</p>
+        <p class="card-text">{{ work_out.memo }}</p>
     </div>
     {% endfor %}
-    """, work_outs=work_outs, user_id=user_id)
+</div>
+        """, work_outs = work_outs, user_id = user_id)
+            return html_content
+        else:
+            return "Date parameter is missing", 400
+    except jwt.ExpiredSignatureError:
+        print("cookie expired")
+        return render_template('login.html')
+    except jwt.exceptions.DecodeError:
+        print("cookie undifned")
+        return render_template('login.html')
 
-        return html_content
-    else:
-        return "Date parameter is missing", 400
+@app.route('/workOut/edit', methods=['POST'])
+def updateWorkOut():
+    token_receive = request.cookies.get('myToken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms = ['HS256'])
+
+        id = request.form['id']
+        type = request.form['type']
+        time = request.form['time']
+        memo = request.form['memo']
+        print("params", id,type,time,memo)
+        result = db.workOut.update_one({'_id': ObjectId(id)}, {'$set': {'type': type, 'time': time, 'memo': memo}})
+        if result:
+            return jsonify({'result': 'success'})
+        else:
+            return jsonify({'result': 'fail', 'msg': '운동 수정 실패하였습니다.'})
+    except jwt.ExpiredSignatureError:
+        print("cookie expired")
+        return render_template('login.html')
+    except jwt.exceptions.DecodeError:
+        print("cookie undifned")
+        return render_template('login.html')
 
     
 # @app.route('/api/calendar', methods=['GET'])
