@@ -17,6 +17,10 @@
         font-family: Arial, sans-serif;
       }
 
+      * {
+        box-sizing: border-box;
+      }
+
       /* 캘린더 컨테이너 */
       #calendar-container {
         display: flex;
@@ -45,6 +49,7 @@
         flex-direction: column;
         justify-content: space-between;
         transition: transform 0.3s, box-shadow 0.3s;
+        width: calc(32% - 1rem); /* 너비를 약간 줄임 */
       }
 
       .card:hover {
@@ -158,7 +163,7 @@
         </div>
 
         <!-- 카드 박스 -->
-        <div class="w-full max-w-3xl p-4">
+        <div class="w-full max-w-4xl p-4">
             <div class="card-container">
                 <div class="card">
                     <div class="card-header">
