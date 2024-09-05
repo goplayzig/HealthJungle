@@ -25,10 +25,9 @@
 
       /* 카드 컨테이너 스타일 */
       .card-container {
-        display: flex;
-        flex-wrap: wrap; /* 카드가 한 줄에 가득 차면 자동으로 줄 바꿈 */
-        gap: 1rem; /* 카드 간의 간격 */
-        justify-content: space-between; /* 카드 간의 여백을 균등하게 분배 */
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjust the column width and auto-fill */
+        gap: 1rem; /* Space between cards */
       }
 
       /* 각 카드의 스타일 */
@@ -37,7 +36,6 @@
         border-radius: 0.75rem;
         background-color: #ffffff;
         padding: 1.5rem;
-        width: calc(33.333% - 1rem); /* 3개 카드가 가로로 나란히 배치될 수 있도록 너비 조정 */
         height: auto;
         display: flex;
         flex-direction: column;
@@ -152,7 +150,6 @@
             return response.text();  // HTML을 텍스트로 처리
         })
         .then(html => {
-            // HTML 부분을 적절한 요소에 삽입
             document.getElementById('card-collection').innerHTML = html;
         })
         .catch(error => {
@@ -171,7 +168,6 @@
 
         var date = getKoreanNowDate()
         let memo = $("#memo").val();
-        console.log("내용들 들어옴 ? ", memo) 
         $.ajax({
           type: "POST",
           url: "/api/calendar",

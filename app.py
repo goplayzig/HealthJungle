@@ -76,7 +76,7 @@ def postLogin():
        payload = {
           'id': id,
           'name': result['name'],
-          'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5)   
+          'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=15)   
        }
        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
        return jsonify({'result': 'success', 'token': token})
@@ -121,7 +121,7 @@ def calendar():
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms = ['HS256'])
         user_id = payload['id']
         if date:
-            work_outs = list(db.workOut.find({'date': date}))
+            work_outs = list(db.workOut.find({'date': date}).sort('_id', -1))
             for item in work_outs:
                 item['_id'] = str(item['_id'])
             print(work_outs, user_id)
@@ -143,7 +143,16 @@ def calendar():
             </div>
         </div>
         <p class="card-date">{{ work_out.date }}</p>
-        <p class="card-time">{{ work_out.time }}</p>
+        <p class="card-type">
+            {% if work_out.type == "0" %} 실내 달리기
+            {% elif work_out.type == "1" %} 실내 걷기
+            {% elif work_out.type == "2" %} 실외 달리기
+            {% elif work_out.type == "3" %} 실외 걷기
+            {% elif work_out.type == "4" %} 계단 오르기
+            {% else %} 알 수 없는 유형
+            {% endif %}
+            {{ work_out.time }}분
+        </p>
         <p class="card-text">{{ work_out.memo }}</p>
     </div>
     {% endfor %}
